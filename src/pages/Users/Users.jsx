@@ -235,17 +235,27 @@ const Users = () => {
   };
 
   const confirmDeleteAdmin = async () => {
-    const { admin } = deleteAdminDialog;
-    if (!admin) return;
+    if (!deleteAdminDialog.admin?._id) {
+      setDeleteAdminDialog({ open: false, admin: null });
+      return;
+    }
 
     try {
-        const response = await api.delete(`/${admin._id}`);
-        if (response.data?.success) {
-            setSnackbar({ open: true, message: 'Admin deleted successfully.', severity: 'success' });
-            fetchAdmins(); // Refresh list
-        }
+      const response = await api.delete(`/admin/${deleteAdminDialog.admin._id}`);
+      if (response.data?.success) {
+        setSnackbar({ 
+          open: true, 
+          message: 'Admin deleted successfully.', 
+          severity: 'success' 
+        });
+        fetchAdmins(); // Refresh list
+      }
     } catch (err) {
-        setSnackbar({ open: true, message: err.response?.data?.message || 'Failed to delete admin.', severity: 'error' });
+      setSnackbar({ 
+        open: true, 
+        message: err.response?.data?.message || 'Failed to delete admin.', 
+        severity: 'error' 
+      });
     }
     setDeleteAdminDialog({ open: false, admin: null });
   };
