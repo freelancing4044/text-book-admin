@@ -304,7 +304,8 @@ const Users = () => {
       const { user } = deleteDialog;
       console.log('Deactivating user:', user.userId);
       
-      const response = await api.delete(`/users/${user.userId}`);
+      // Update endpoint to match backend route
+      const response = await api.delete(`/admin/users/${user.userId}`);
       
       if (response.data && response.data.success) {
         // Remove user from the stats
@@ -772,13 +773,20 @@ const Users = () => {
       </Dialog>
 
       {/* Delete Admin Confirmation Dialog */}
-      <Dialog open={deleteAdminDialog.open} onClose={() => setDeleteAdminDialog({ open: false, admin: null })}>
+      <Dialog 
+        open={deleteAdminDialog.open} 
+        onClose={handleCloseDeleteAdminDialog}
+        BackdropProps={{ 
+          component: 'div',
+          style: { backgroundColor: 'rgba(0, 0, 0, 0.5)' } 
+        }}
+      >
         <DialogTitle>Delete Admin</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete the admin account for <strong>{deleteAdminDialog.admin?.email}</strong>? This action cannot be undone.
           </DialogContentText>
-        </DialogContent>
+{{ ... }}
         <DialogActions>
           <Button onClick={() => setDeleteAdminDialog({ open: false, admin: null })}>Cancel</Button>
           <Button onClick={confirmDeleteAdmin} color="error" variant="contained">Delete</Button>
