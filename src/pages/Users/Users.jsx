@@ -304,8 +304,8 @@ const Users = () => {
       const { user } = deleteDialog;
       console.log('Deactivating user:', user.userId);
       
-      // Update endpoint to match backend route
-      const response = await api.delete(`/admin/users/${user.userId}`);
+      // Update endpoint to match backend route with /api prefix
+      const response = await api.delete(`/api/admin/users/${user.userId}`);
       
       if (response.data && response.data.success) {
         // Remove user from the stats
