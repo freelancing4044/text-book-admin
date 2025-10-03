@@ -215,7 +215,10 @@ const Users = () => {
         return;
     }
     try {
-        const response = await api.post('/create', { email: newAdminEmail, password: newAdminPassword });
+        const response = await api.post('/admin/create', { 
+            email: newAdminEmail, 
+            password: newAdminPassword 
+        });
         if (response.data?.success) {
             setSnackbar({ open: true, message: 'Admin created successfully!', severity: 'success' });
             setNewAdminEmail('');
