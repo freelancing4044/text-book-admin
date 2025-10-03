@@ -12,7 +12,7 @@ import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute';
 
 const App = () => {
   // for testing
-  const url = 'http://localhost:4000';
+  const url = 'https://text-book-backend.onrender.com';
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
 
