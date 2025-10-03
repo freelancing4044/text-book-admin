@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base configuration
-const API_BASE_URL = 'http://localhost:4000/api';
+const API_BASE_URL = 'https://text-book-backend.onrender.com/api';
 
 const http = axios.create({
   baseURL: API_BASE_URL,
