@@ -93,7 +93,6 @@ const Users = () => {
   const [error, setError] = useState(null);
   const [tabValue, setTabValue] = useState(0);
   const [userTests, setUserTests] = useState({});
-  const [deleteDialog, setDeleteDialog] = useState({ open: false, user: null });
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   // Admin management state
@@ -135,7 +134,7 @@ const Users = () => {
             setStats(statsData);
             setError(null);
           } else {
-            console.error('Unexpected API response format:', response.data);
+            console.error('Unexpected AdPI response format:', response.data);
             setError('Received unexpected data format from server');
           }
         }
@@ -295,44 +294,7 @@ const Users = () => {
     fetchUserTestHistory(userId, userName);
   };
 
-  const handleDeactivateUser = (user) => {
-    setDeleteDialog({ open: true, user });
-  };
-
-  const confirmDeactivateUser = async () => {
-    try {
-      const { user } = deleteDialog;
-      console.log('Deactivating user:', user.userId);
-      
-      // Update endpoint to match backend route with /api prefix
-      const response = await api.delete(`/api/admin/users/${user.userId}`);
-      
-      if (response.data && response.data.success) {
-        // Remove user from the stats
-        setStats(prevStats => ({
-          ...prevStats,
-          userStats: prevStats.userStats.filter(u => u.userId !== user.userId),
-          totalUsers: prevStats.totalUsers - 1
-        }));
-        setSnackbar({
-          open: true,
-          message: `User ${user.name} has been deactivated successfully`,
-          severity: 'success'
-        });
-      }
-    } catch (err) {
-      console.error('Error deactivating user:', err);
-      setSnackbar({
-        open: true,
-        message: 'Failed to deactivate user. Please try again.',
-        severity: 'error'
-      });
-    } finally {
-      setDeleteDialog({ open: false, user: null });
-    }
-  };
-
-  const handleCloseSnackbar = () => {
+const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
@@ -550,16 +512,7 @@ const Users = () => {
                               <VisibilityIcon sx={{ fontSize: 16, mr: 0.5 }} />
                               View Tests
                             </button>
-                            {user.role !== 'admin' && (
-                              <button 
-                                onClick={() => handleDeactivateUser(user)}
-                                className="deactivate-btn"
-                                title="Deactivate user"
-                              >
-                                <DeleteIcon sx={{ fontSize: 14, mr: 0.5 }} />
-                                Deactivate
-                              </button>
-                            )}
+                           
                           </div>
                         </TableCell>
                       </TableRow>
@@ -738,44 +691,10 @@ const Users = () => {
 
       </Paper>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog
-        open={deleteDialog.open}
-        onClose={() => setDeleteDialog({ open: false, user: null })}
-        aria-labelledby="delete-dialog-title"
-        aria-describedby="delete-dialog-description"
-      >
-        <DialogTitle id="delete-dialog-title">
-          Deactivate User
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="delete-dialog-description">
-            Are you sure you want to deactivate user <strong>{deleteDialog.user?.name}</strong>? 
-            This action will prevent them from logging in, but their data will be preserved.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button 
-            onClick={() => setDeleteDialog({ open: false, user: null })}
-            color="primary"
-          >
-            Cancel
-          </Button>
-          <Button 
-            onClick={confirmDeactivateUser}
-            color="error"
-            variant="contained"
-            startIcon={<DeleteIcon />}
-          >
-            Deactivate
-          </Button>
-        </DialogActions>
-      </Dialog>
-
       {/* Delete Admin Confirmation Dialog */}
       <Dialog 
         open={deleteAdminDialog.open} 
-        onClose={handleCloseDeleteAdminDialog}
+        onClose={() => setDeleteAdminDialog({ open: false, admin: null })}
         BackdropProps={{ 
           component: 'div',
           style: { backgroundColor: 'rgba(0, 0, 0, 0.5)' } 
@@ -786,11 +705,11 @@ const Users = () => {
           <DialogContentText>
             Are you sure you want to delete the admin account for <strong>{deleteAdminDialog.admin?.email}</strong>? This action cannot be undone.
           </DialogContentText>
-{{ ... }}
         <DialogActions>
           <Button onClick={() => setDeleteAdminDialog({ open: false, admin: null })}>Cancel</Button>
           <Button onClick={confirmDeleteAdmin} color="error" variant="contained">Delete</Button>
         </DialogActions>
+         </DialogContent>
       </Dialog>
 
       {/* Snackbar for notifications */}
